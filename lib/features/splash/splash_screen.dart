@@ -434,7 +434,7 @@ class _AppTitleSection extends StatelessWidget {
                 end: Alignment.bottomCenter,
               ).createShader(bounds),
           child: const Text(
-            'Salmawy App',
+            'Salmawy',
             style: TextStyle(
               fontSize: 34,
               fontWeight: FontWeight.w700,
@@ -446,27 +446,6 @@ class _AppTitleSection extends StatelessWidget {
         ),
 
         const SizedBox(height: 12),
-
-        // Divider row with Arabic subtitle
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            _DividerLine(),
-            const SizedBox(width: 12),
-            const Text(
-              'متابعة الطلاب بسهولة',
-              textDirection: TextDirection.rtl,
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w400,
-                color: AppColors.onSurfaceVariant,
-                letterSpacing: 0.2,
-              ),
-            ),
-            const SizedBox(width: 12),
-            _DividerLine(),
-          ],
-        ),
       ],
     );
   }
