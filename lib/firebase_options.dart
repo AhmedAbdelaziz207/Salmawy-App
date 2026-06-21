@@ -51,7 +51,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyBKtHa0S4xcsVMxgs4aUm8a8ZyHphPaE1o',
-    appId: '1:370281931765:android:77b2b2259e5ed3c50336bc',
+    appId: '1:370281931765:android:4d342fa521a8f05b0336bc',
     messagingSenderId: '370281931765',
     projectId: 'super-system-bf621',
     storageBucket: 'super-system-bf621.firebasestorage.app',
@@ -59,10 +59,11 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyDiMH27CJJg2T_95-bMTBIbzLaqDIGvu1M',
-    appId: '1:370281931765:ios:1f72bd6c789b05ee0336bc',
+    appId: '1:370281931765:ios:37b886b5a11f9fa90336bc',
     messagingSenderId: '370281931765',
     projectId: 'super-system-bf621',
     storageBucket: 'super-system-bf621.firebasestorage.app',
-    iosBundleId: 'com.example.superSystem',
+    iosBundleId: 'com.superdev.salmawyapp',
   );
+
 }

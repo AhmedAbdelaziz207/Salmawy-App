@@ -1,11 +1,14 @@
+import 'dart:developer';
 import 'dart:io';
-import 'package:easy_notify/easy_notify.dart';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'dart:developer';
+import 'package:timezone/data/latest_all.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
+
 class NotificationService {
   static final NotificationService _instance = NotificationService._internal();
 
@@ -14,14 +17,50 @@ class NotificationService {
   NotificationService._internal();
 
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
+  final FlutterLocalNotificationsPlugin _localNotifications =
+      FlutterLocalNotificationsPlugin();
+
+  static const _androidChannel = AndroidNotificationDetails(
+    'easy_notify_channel',
+    'Easy Notify',
+    importance: Importance.max,
+    priority: Priority.high,
+  );
+
+  static const _iosDetails = DarwinNotificationDetails();
+
+  static const _notificationDetails = NotificationDetails(
+    android: _androidChannel,
+    iOS: _iosDetails,
+  );
 
   Future<void> initialize() async {
-    await Firebase.initializeApp();
-    await EasyNotify.init();
-    await EasyNotifyPermissions.requestAll();
+    await _initLocalNotifications();
     await _requestPermissions();
     await _setupFCMHandlers();
-    log("Fcm Token : ${await _firebaseMessaging.getToken()}"); 
+    try {
+  log('Fcm Token : ${await _firebaseMessaging.getToken()}');
+} on Exception catch (e) {
+  log('Error getting FCM Token: $e');
+}
+  }
+
+  Future<void> _initLocalNotifications() async {
+    tz.initializeTimeZones();
+
+    const androidSettings =
+        AndroidInitializationSettings('@mipmap/ic_launcher');
+    const darwinSettings = DarwinInitializationSettings(
+      requestAlertPermission: false,
+      requestBadgePermission: false,
+      requestSoundPermission: false,
+    );
+    const settings = InitializationSettings(
+      android: androidSettings,
+      iOS: darwinSettings,
+    );
+
+    await _localNotifications.initialize(settings);
   }
 
   Future<void> _requestPermissions() async {
@@ -52,11 +91,14 @@ class NotificationService {
   Future<void> _setupFCMHandlers() async {
     _firebaseMessaging.onTokenRefresh.listen((token) {
       debugPrint('FCM Token refreshed: $token');
-      // TODO: Send token to server
     });
 
-    final token = await _firebaseMessaging.getToken();
-    debugPrint('FCM Token: $token');
+    try {
+  final token = await _firebaseMessaging.getToken();
+  debugPrint('FCM Token: $token');
+} on Exception catch (e) {
+    debugPrint('Error getting FCM Token: $e');
+}
 
     FirebaseMessaging.onMessage.listen(_handleForegroundMessage);
     FirebaseMessaging.onMessageOpenedApp.listen(_handleNotificationTap);
@@ -66,7 +108,7 @@ class NotificationService {
   void _handleForegroundMessage(RemoteMessage message) {
     debugPrint('Foreground FCM Message: ${message.data}');
     if (message.notification != null) {
-      EasyNotify.showBasicNotification(
+      showLocalNotification(
         id: message.hashCode,
         title: message.notification?.title ?? '',
         body: message.notification?.body ?? '',
@@ -76,17 +118,21 @@ class NotificationService {
 
   void _handleNotificationTap(RemoteMessage message) {
     debugPrint('Notification Tapped: ${message.data}');
-    // TODO: Navigate based on message data
   }
 
-  // Public methods
   Future<void> showLocalNotification({
     required String title,
     required String body,
     String? payload,
     int id = 0,
   }) async {
-    await EasyNotify.showBasicNotification(id: id, title: title, body: body);
+    await _localNotifications.show(
+      id,
+      title,
+      body,
+      _notificationDetails,
+      payload: payload,
+    );
   }
 
   Future<void> showScheduledNotification({
@@ -95,11 +141,17 @@ class NotificationService {
     required Duration delay,
     int id = 1,
   }) async {
-    await EasyNotify.showScheduledNotification(
-      id: id,
-      title: title,
-      body: body,
-      duration: delay,
+    final scheduleTime = DateTime.now().add(delay);
+
+    await _localNotifications.zonedSchedule(
+      id,
+      title,
+      body,
+      tz.TZDateTime.from(scheduleTime, tz.local),
+      _notificationDetails,
+      uiLocalNotificationDateInterpretation:
+          UILocalNotificationDateInterpretation.absoluteTime,
+      androidScheduleMode: AndroidScheduleMode.inexact,
     );
   }
 
@@ -109,19 +161,26 @@ class NotificationService {
     Duration interval = const Duration(days: 1),
     int id = 2,
   }) async {
-    await EasyNotify.showRepeatedNotification(id: id, title: title, body: body);
+    await _localNotifications.periodicallyShow(
+      id,
+      title,
+      body,
+      RepeatInterval.daily,
+      _notificationDetails,
+      androidScheduleMode: AndroidScheduleMode.inexact,
+    );
   }
 
   Future<void> cancelNotification(int id) async {
-    await EasyNotify.cancel(id);
+    await _localNotifications.cancel(id);
   }
 
   Future<void> cancelAllNotifications() async {
-    await EasyNotify.cancelAll();
+    await _localNotifications.cancelAll();
   }
 
   Future<String?> getFCMToken() async {
-    return await _firebaseMessaging.getToken();
+    return _firebaseMessaging.getToken();
   }
 
   Future<void> subscribeToTopic(String topic) async {
