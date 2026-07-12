@@ -270,56 +270,7 @@ class ExamItemCard extends StatelessWidget {
                 ),
               ],
             ),
-          ] else ...[
-            // Absent Content
-            Container(
-              width: double.infinity,
-              padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 16.w),
-              decoration: BoxDecoration(
-                color: AppColors.surface.withValues(alpha: 0.5),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  // Action Link
-                  InkWell(
-                    onTap: () {
-                      // Submit excuse action
-                    },
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.arrow_back,
-                          color: const Color(0xFFC29CFC),
-                          size: 14.w,
-                        ),
-                        SizedBox(width: 4.w),
-                        Text(
-                          'تقديم عذر',
-                          style: GoogleFonts.cairo(
-                            color: const Color(0xFFC29CFC),
-                            fontSize: 11.sp,
-                            fontWeight: FontWeight.bold,
-                            decoration: TextDecoration.underline,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  // Text Warning
-                  Text(
-                    'لم يتم رصد درجة لعدم الحضور',
-                    style: GoogleFonts.cairo(
-                      color: AppColors.onSurfaceVariant,
-                      fontSize: 11.sp,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
+          ]
         ],
       ),
     );
