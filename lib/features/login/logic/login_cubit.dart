@@ -22,7 +22,7 @@ class LoginCubit extends Cubit<LoginStates> {
         deviceName: 'Mobile Device', // TODO: Get actual device name
         appVersion: '1.0.0', // TODO: Get actual app version
         notificationsStatus: 'enabled',
-        app: 'super',
+        app: 'salmawy',
       );
       
       final response = await _loginRepo.login(request);
