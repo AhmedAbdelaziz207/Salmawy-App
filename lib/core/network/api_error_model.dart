@@ -4,7 +4,7 @@ part 'api_error_model.g.dart';
 
 @JsonSerializable()
 class ApiErrorModel {
-  final int? status;
+  final String? status;
   final String? message;
   final dynamic reason;
 
@@ -20,8 +20,12 @@ class ApiErrorModel {
       // Server responded with an error
       if (error.response?.data != null) {
         try {
-
-          return error.response?.data['msg'] ?? 'Request failed.';
+          final data = error.response?.data;
+          if (data is Map<String, dynamic>) {
+            final errorModel = ApiErrorModel.fromJson(data);
+            return errorModel.message ?? errorModel.reason?.toString() ?? 'Request failed.';
+          }
+          return error.response?.data['msg'] ?? error.response?.data['message'] ?? 'Request failed.';
         } catch (_) {
           return 'Request failed with status: ${error.response?.statusCode ?? 'Unknown'}';
         }
