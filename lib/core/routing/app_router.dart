@@ -22,7 +22,7 @@ abstract class AppRouter {
         return MaterialPageRoute(
           builder:
               (_) => BlocProvider(
-                create: (context) => LoginCubit(getIt()),
+                create: (context) => LoginCubit(getIt(), getIt()),
                 child: const LoginScreen(),
               ),
         );

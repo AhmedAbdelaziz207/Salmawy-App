@@ -2,7 +2,7 @@ class ApiEndpoints {
   const ApiEndpoints._();
 
   static const String baseUrl =
-      'https://papayawhip-seahorse-130909.hostingersite.com';
+      'https://api.super-system.net';
   static const String login = '/parent/login';
 
   static const String home = '/parent/getStatistics';

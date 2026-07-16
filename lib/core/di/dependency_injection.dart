@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:salmawy_app/core/network/api_service.dart';
 import 'package:salmawy_app/core/network/dio_factory.dart';
+import 'package:salmawy_app/core/services/device_info_service.dart';
 import 'package:salmawy_app/features/home/logic/home_cubit.dart';
 import 'package:salmawy_app/features/home/logic/home_repo.dart';
 import 'package:salmawy_app/features/login/logic/login_repo.dart';
@@ -22,6 +23,9 @@ Future<void> setupGetIt() async {
   // Dio & ApiService
   Dio dio = DioFactory.getDio();
   getIt.registerLazySingleton<ApiService>(() => ApiService(dio));
+
+  // Device Info Service
+  getIt.registerLazySingleton<DeviceInfoService>(() => DeviceInfoService());
 
   // login
   getIt.registerLazySingleton<LoginRepo>(() => LoginRepo(getIt()));

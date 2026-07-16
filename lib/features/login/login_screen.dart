@@ -42,7 +42,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => LoginCubit(getIt()),
+      create: (context) => LoginCubit(getIt(), getIt()),
       child: Scaffold(
       backgroundColor: AppColors.surface,
       body: Stack(
